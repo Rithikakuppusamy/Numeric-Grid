@@ -1,171 +1,142 @@
-import java.util.InputMismatchException;
 import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
 
-    private static final int minVal = 2;
-    private static final int maxVal = 20;
-    private static final int[] possibleNums = {2, 4, 6, 8, 10, 12, 14, 16, 18, 20};
+    private static final int min = 2;
+    private static final int max = 20;
+    private static final int[] nums = {2,4,6,8,10,12,14,16,18,20};
 
     public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
-        int size = 0;
-        int[][] grid = null;
 
-        do {
+        Scanner sc = new Scanner(System.in);
+        int n = 0;
+        int[][] arr = null;
+
+        while (true) {
             System.out.print("Enter array size (for NxN array): ");
             try {
-                if (scan.hasNextInt()) {
-                    size = scan.nextInt();
-                    if (size > 0) {
-                        
-                        grid = generateGrid(size); 
+                if (sc.hasNextInt()) {
+                    n = sc.nextInt();
+                    if (n > 0) {
+                        arr = makeGrid(n);
                         System.out.println("\nGenerated 2D array:");
-                        displayGrid(size, grid, 0); 
+                        showGrid(n, arr, 0);
                         break;
                     } else {
-                        System.out.println("Invalid input. Please enter a positive integer for the array size.");
+                        System.out.println("Invalid input. Enter positive number.");
                     }
                 } else {
-                    String input = scan.next();
-                    System.out.println("Invalid input '" + input + "'. Please enter a valid integer for the array size.");
+                    String input = sc.next();
+                    System.out.println("Invalid input '" + input + "'. Enter number only.");
                 }
             } catch (Exception e) {
-                System.out.println("An unexpected error occurred during size input. Please try again.");
-                scan.nextLine(); 
+                System.out.println("Error. Try again.");
+                sc.nextLine();
             }
-        } while (true);
-
-        int highlightNum = 0;
-        int count = 0;
-        
-        if (scan.hasNextLine()) { 
-            scan.nextLine();
         }
 
-        do {
-           
-            System.out.print("\nEnter a number to highlight (even number " + minVal + "-" + maxVal + "): ");
+        int x = 0;
+        int count = 0;
+
+        if (sc.hasNextLine()) sc.nextLine();
+
+        while (true) {
+            System.out.print("\nEnter a number to highlight (even " + min + "-" + max + "): ");
             try {
-                if (scan.hasNextInt()) {
-                    highlightNum = scan.nextInt();
-                    
-                    if (highlightNum >= minVal && highlightNum <= maxVal && highlightNum % 2 == 0) {
+                if (sc.hasNextInt()) {
+                    x = sc.nextInt();
+                    if (x >= min && x <= max && x % 2 == 0) {
                         System.out.println("\nStep 2:");
-                        System.out.println("Enter a number to highlight (even number " + minVal + "-" + maxVal + "): " + highlightNum);
-                        
-                        
-                        displayGrid(size, grid, highlightNum); 
-                        
-                     
-                        count = countOccurrences(size, grid, highlightNum);
-
-                        System.out.println("\nNumber " + highlightNum + " appeared " + count + " time(s)");
+                        System.out.println("Enter a number to highlight (even " + min + "-" + max + "): " + x);
+                        showGrid(n, arr, x);
+                        count = findCount(n, arr, x);
+                        System.out.println("\nNumber " + x + " appeared " + count + " time(s)");
                         break;
                     } else {
-                        System.out.println("Invalid input. Please enter an even number between " + minVal + " and " + maxVal + ".");
+                        System.out.println("Invalid input. Enter even number within range.");
                     }
                 } else {
-                    String input = scan.next();
-                    System.out.println("Invalid input '" + input + "'. Please enter a valid even number between " + minVal + " and " + maxVal + ".");
+                    String bad = sc.next();
+                    System.out.println("Invalid input '" + bad + "'. Enter even number.");
                 }
             } catch (Exception e) {
-                System.out.println("An unexpected error occurred during highlight input. Please try again.");
-                scan.nextLine();
+                System.out.println("Error. Try again.");
+                sc.nextLine();
             }
-        } while (true);
+        }
 
-        scan.close();
+        sc.close();
     }
 
-    private static int[][] generateGrid(int size) {
-        int[][] grid = new int[size][size];
-        
+    private static int[][] makeGrid(int n) {
+
+        int[][] arr = new int[n][n];
         long seed;
-        if (size == 8) {
-   
-            seed = 18; 
-        } else if (size == 6) {
-            
-            seed = 28;
-        } else {
-  
-            seed = System.currentTimeMillis();
-        }
-        
-        Random rand = new Random(seed); 
 
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                int randomIndex = rand.nextInt(possibleNums.length);
-                grid[i][j] = possibleNums[randomIndex];
+        if (n == 8) seed = 18;
+        else if (n == 6) seed = 28;
+        else seed = System.currentTimeMillis();
+
+        Random r = new Random(seed);
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                int k = r.nextInt(nums.length);
+                arr[i][j] = nums[k];
             }
         }
-        return grid;
+        return arr;
     }
 
-    private static int countOccurrences(int size, int[][] grid, int highlightNum) {
-        int count = 0;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (grid[i][j] == highlightNum) {
-                    count++;
-                }
+    private static int findCount(int n, int[][] arr, int x) {
+        int c = 0;
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (arr[i][j] == x) c++;
             }
         }
-        return count;
+        return c;
     }
 
-    private static void displayGrid(int size, int[][] grid, int highlightNum) {
-        System.out.print("    "); 
-        for (int j = 0; j < size; j++) {
-            System.out.printf("%2d", j); 
-            if (j < size - 1) {
-                System.out.print(" | "); 
-            } else {
-                System.out.print(" "); 
-            }
+    private static void showGrid(int n, int[][] arr, int x) {
+
+        System.out.print("    ");
+        for (int j = 0; j < n; j++) {
+            System.out.printf("%2d", j);
+            if (j < n - 1) System.out.print(" | ");
+            else System.out.print(" ");
         }
         System.out.println();
 
-        printSeparator(size);
+        line(n);
 
-        for (int i = 0; i < size; i++) {
-            System.out.printf("%2d|", i); 
+        for (int i = 0; i < n; i++) {
+            System.out.printf("%2d|", i);
 
-            for (int j = 0; j < size; j++) {
-                int val = grid[i][j];
-                String cellText;
+            for (int j = 0; j < n; j++) {
+                int v = arr[i][j];
+                String out;
 
-                if (highlightNum > 0 && val == highlightNum) {
-                    if (val < 10) {
-                        cellText = String.format("[%d] ", val);
-                    } else {
-                        cellText = String.format("[%d]", val);
-                    }
+                if (x > 0 && v == x) {
+                    if (v < 10) out = "[" + v + "] ";
+                    else out = "[" + v + "]";
                 } else {
-                    if (val < 10) {
-                        cellText = String.format("  %d ", val);
-                    } else {
-                        cellText = String.format(" %d ", val);
-                    }
+                    if (v < 10) out = "  " + v + " ";
+                    else out = " " + v + " ";
                 }
-                
-                System.out.printf("%s|", cellText);
+
+                System.out.printf("%s|", out);
             }
-            
+
             System.out.println();
-            
-            printSeparator(size);
+            line(n);
         }
     }
 
-    private static void printSeparator(int size) {
-        System.out.print("+---"); 
-        for (int j = 0; j < size; j++) {
-            System.out.print("----+"); 
-        }
+    private static void line(int n) {
+        System.out.print("+---");
+        for (int i = 0; i < n; i++) System.out.print("----+");
         System.out.println();
     }
 }
