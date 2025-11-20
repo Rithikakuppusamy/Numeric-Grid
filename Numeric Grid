@@ -47,7 +47,7 @@ public class Main {
                 if (sc.hasNextInt()) {
                     x = sc.nextInt();
                     if (x >= min && x <= max && x % 2 == 0) {
-                        System.out.println("\nStep 2:");
+                        
                         System.out.println("Enter a number to highlight (even " + min + "-" + max + "): " + x);
                         showGrid(n, arr, x);
                         count = findCount(n, arr, x);
